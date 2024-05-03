@@ -1,9 +1,11 @@
 'use client'
+import ChatGPT from '@/components/ChatGPT';
 import { useState } from 'react';
 import Papa from 'papaparse';
 
 const FileUpload = () => {
-  const [dataFromFile, setDataFromFile] = useState([]);
+  const [fileContent, setFileContent] = useState(''); // Store the string content of the file
+  const [dataFromFile, setDataFromFile] = useState([]); // Store the parsed data for display
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -12,7 +14,9 @@ const FileUpload = () => {
         header: true,
         skipEmptyLines: true,
         complete: (results) => {
-          setDataFromFile(results.data);
+          const csvString = Papa.unparse(results.data); // Convert parsed data back to CSV string format
+          setFileContent(csvString); // Set the CSV string
+          setDataFromFile(results.data); // Update the data for display
         },
         error: (error) => {
           console.error('Error reading CSV:', error);
@@ -42,6 +46,8 @@ const FileUpload = () => {
         />
       </form>
 
+      <br />
+      <ChatGPT extraInformation={fileContent} />  {/* Pass raw data as props */}
       <br />
       <hr />
       <br />
